@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shaxsiy Profil Ma'lumotnomasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
+        .card-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .input-focus:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .profile-image { width: 120px; height: 120px; object-fit: cover; }
+        .tab-active { background: #3b82f6; color: white; }
+        .tab-inactive { background: transparent; color: #6b7280; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .line-clamp-2 { 
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+        }
+        @media (max-width: 640px) {
+            .container { padding-left: 1rem; padding-right: 1rem; }
+            .max-w-4xl { max-width: 100%; }
+            .max-w-2xl { max-width: 100%; }
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg bg-gray-50 pb-20">
+    <!-- Teppadagi navigatsiya -->
+    <div class="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-3 py-2 z-40 shadow-sm">
+        <div class="flex justify-between items-center max-w-6xl mx-auto">
+            <!-- Chap tomon - Logo yoki nom -->
+            <div class="flex items-center">
+                <h1 class="text-lg font-semibold text-gray-800">Profil</h1>
+            </div>
+            
+            <!-- O'rta qism - Navigatsiya tugmalari -->
+            <div class="flex items-center gap-3">
+                <button onclick="showTopSection('mygov')" id="mygovTopTab" class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all hover:bg-blue-50 group">
+                    <div class="w-7 h-7 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600 hidden sm:block">MyGov</span>
+                </button>
+                
+                <button onclick="showTopSection('telegram')" id="telegramTopTab" class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all hover:bg-blue-50 group">
+                    <div class="w-7 h-7 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600 hidden sm:block">Telegram</span>
+                </button>
+                
+                <button onclick="showTopSection('instagram')" id="instagramTopTab" class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all hover:bg-pink-50 group">
+                    <div class="w-7 h-7 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium text-gray-600 group-hover:text-pink-600 hidden sm:block">Instagram</span>
+                </button>
+                
+                <button onclick="showTopSection('contacts')" id="contactsTopTab" class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all hover:bg-green-50 group">
+                    <div class="w-7 h-7 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 0H4v2h16V0zM4 24h16v-2H4v2zM20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 2.75c1.24 0 2.25 1.01 2.25 2.25S13.24 11.25 12 11.25 9.75 10.24 9.75 9S10.76 6.75 12 6.75zM17 17H7v-1.5c0-1.67 3.33-2.5 5-2.5s5 .83 5 2.5V17z"/>
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium text-gray-600 group-hover:text-green-600 hidden sm:block">Kontaktlar</span>
+                </button>
+            </div>
+            
+            <!-- O'ng tomon - Chiqish tugmasi -->
+            <button onclick="logout()" class="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                </svg>
+                <span class="text-sm font-medium hidden sm:block">Chiqish</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 pt-16">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-semibold text-gray-800 mb-2">Shaxsiy Profil</h1>
+            <p class="text-gray-600">Ma'lumotlaringizni boshqaring</p>
+        </div>
+
+        <!-- Profil oynasi -->
+        <div id="profileSection" class="section active">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="text-center mb-8">
+                        <div class="relative mx-auto mb-4 w-32 h-32">
+                            <img id="profileImage" class="w-32 h-32 rounded-full mx-auto border-4 border-gray-100 hidden object-cover" alt="Profil rasmi">
+                            <div id="profilePlaceholder" class="w-32 h-32 bg-blue-500 rounded-full mx-auto flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-gray-800" id="displayName">Ismingiz</h2>
+                        <p class="text-gray-500 text-lg" id="displayTitle">Lavozimingiz</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="flex items-center text-gray-600 bg-gray-50 p-4 rounded-lg">
+                            <svg class="w-6 h-6 mr-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm text-gray-500">Email</p>
+                                <span id="displayEmail" class="font-medium">email@example.com</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-gray-600 bg-gray-50 p-4 rounded-lg">
+                            <svg class="w-6 h-6 mr-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm text-gray-500">Telefon</p>
+                                <span id="displayPhone" class="font-medium">+998 XX XXX XX XX</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-gray-600 bg-gray-50 p-4 rounded-lg">
+                            <svg class="w-6 h-6 mr-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm text-gray-500">Manzil</p>
+                                <span id="displayLocation" class="font-medium">Manzilingiz</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-gray-600 bg-gray-50 p-4 rounded-lg">
+                            <svg class="w-6 h-6 mr-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H18V1h-2v1H8V1H6v1H4.5C3.67 2 3 2.67 3 3.5v15C3 19.33 3.67 20 4.5 20h15c.83 0 1.5-.67 1.5-1.5v-15C21 2.67 20.33 2 19.5 2zm0 16h-15v-12h15v12z"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm text-gray-500">Tug'ilgan sana</p>
+                                <span id="displayBirthDate" class="font-medium">Kiritilmagan</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                        <h4 class="font-medium text-gray-800 mb-2">Haqida</h4>
+                        <p id="displayBio" class="text-gray-600">Hozircha ma'lumot kiritilmagan</p>
+                    </div>
+
+                    <button id="downloadPDF" class="w-full bg-blue-500 text-white py-4 px-6 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center text-lg font-medium">
+                        <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                        </svg>
+                        PDF yuklab olish
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sozlamalar oynasi -->
+        <div id="settingsSection" class="section">
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">Profil sozlamalari</h3>
+                    
+                    <form id="profileForm" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Ism</label>
+                                <input type="text" id="firstName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="Ismingiz">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Familiya</label>
+                                <input type="text" id="lastName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="Familiyangiz">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Lavozim</label>
+                            <input type="text" id="jobTitle" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="Lavozimingiz">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Email</label>
+                                <input type="email" id="email" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="email@example.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Telefon</label>
+                                <input type="tel" id="phone" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="+998 XX XXX XX XX">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Manzil</label>
+                            <input type="text" id="address" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="Shahar, tuman">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Tug'ilgan sana</label>
+                            <input type="date" id="birthDate" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Haqida</label>
+                            <textarea id="bio" rows="4" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all resize-none" placeholder="O'zingiz haqingizda..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Profil rasmi</label>
+                            <div class="flex items-center gap-4">
+                                <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
+                                    <img id="settingsProfileImage" class="w-full h-full object-cover hidden" alt="Profil rasmi">
+                                    <div id="settingsProfilePlaceholder" class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <input type="file" id="imageUpload" accept="image/*" class="hidden">
+                                    <button type="button" onclick="document.getElementById('imageUpload').click()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                                        Rasm tanlash
+                                    </button>
+                                    <p class="text-sm text-gray-500 mt-1">JPG, PNG formatida</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 pt-4">
+                            <button type="submit" class="flex-1 bg-blue-500 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-600 transition-colors">
+                                Saqlash
+                            </button>
+                            <button type="button" id="clearBtn" class="px-6 py-3 border border-gray-200 text-gray-600 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                                Tozalash
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ma'lumotlar oynasi -->
+        <div id="dataSection" class="section">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <!-- Shaxsiy ma'lumotlar -->
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800">Shaxsiy ma'lumotlar</h3>
+                        <button onclick="addPersonalInfo()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            Qo'shish
+                        </button>
+                    </div>
+                    <div id="personalInfo" class="space-y-3"></div>
+                </div>
+
+                <!-- Talaba ma'lumotlari -->
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800">Talaba ma'lumotlari</h3>
+                        <button onclick="addStudentInfo()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            Qo'shish
+                        </button>
+                    </div>
+                    <div id="studentInfo" class="space-y-3"></div>
+                </div>
+
+                <!-- Pasport ma'lumotlari -->
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800">Pasport ma'lumotlari</h3>
+                        <button onclick="addPassportInfo()" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            Qo'shish
+                        </button>
+                    </div>
+                    <div id="passportInfo" class="space-y-3"></div>
+                </div>
+
+                <!-- Boshqa ma'lumotlar -->
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800">Boshqa ma'lumotlar</h3>
+                        <button onclick="addOtherInfo()" class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            Qo'shish
+                        </button>
+                    </div>
+                    <div id="otherInfo" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sevimli musiqa oynasi -->
+        <div id="musicSection" class="section">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800">Sevimli musiqalarim</h3>
+                        <button onclick="addMusic()" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                            Musiqa qo'shish
+                        </button>
+                    </div>
+                    <div id="musicList" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rasmlarim oynasi -->
+        <div id="photosSection" class="section">
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800">Rasmlarim</h3>
+                        <button onclick="addPhoto()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                            Rasm qo'shish
+                        </button>
+                    </div>
+                    <div id="photoGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Videolarim oynasi -->
+        <div id="videosSection" class="section">
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800">Videolarim</h3>
+                        <button onclick="addVideo()" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                            </svg>
+                            Video qo'shish
+                        </button>
+                    </div>
+                    <div id="videoGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MyGov oynasi -->
+        <div id="mygovSection" class="section">
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                </svg>
+                            </div>
+                            MyGov.uz
+                        </h3>
+                        <button onclick="refreshMygov()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                            </svg>
+                            Yangilash
+                        </button>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-gray-600 mb-2">🔗 Sayt manzili:</p>
+                        <p class="font-mono text-blue-600">https://my.gov.uz</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg overflow-hidden" style="height: 70vh; min-height: 400px; max-height: 800px;">
+                        <iframe id="mygovFrame" src="" class="w-full h-full" frameborder="0" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation" onload="this.style.display='block'" onerror="this.innerHTML='<div class=\'flex items-center justify-center h-full text-gray-500\'>Sayt yuklanmadi</div>'"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Telegram oynasi -->
+        <div id="telegramSection" class="section">
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                                </svg>
+                            </div>
+                            Telegram Web
+                        </h3>
+                        <button onclick="refreshTelegram()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                            </svg>
+                            Yangilash
+                        </button>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-gray-600 mb-2">🔗 Sayt manzili:</p>
+                        <p class="font-mono text-blue-600">https://web.telegram.org</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg overflow-hidden" style="height: 70vh; min-height: 400px; max-height: 800px;">
+                        <iframe id="telegramFrame" src="" class="w-full h-full" frameborder="0" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation" onload="this.style.display='block'" onerror="this.innerHTML='<div class=\'flex items-center justify-center h-full text-gray-500\'>Sayt yuklanmadi</div>'"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instagram oynasi -->
+        <div id="instagramSection" class="section">
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </div>
+                            Instagram
+                        </h3>
+                        <button onclick="refreshInstagram()" class="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                            </svg>
+                            Yangilash
+                        </button>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-gray-600 mb-2">🔗 Sayt manzili:</p>
+                        <p class="font-mono text-pink-600">https://www.instagram.com</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg overflow-hidden" style="height: 70vh; min-height: 400px; max-height: 800px;">
+                        <iframe id="instagramFrame" src="" class="w-full h-full" frameborder="0" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation" onload="this.style.display='block'" onerror="this.innerHTML='<div class=\'flex items-center justify-center h-full text-gray-500\'>Sayt yuklanmadi</div>'"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kontaktlar oynasi -->
+        <div id="contactsSection" class="section">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl p-6 card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M20 0H4v2h16V0zM4 24h16v-2H4v2zM20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 2.75c1.24 0 2.25 1.01 2.25 2.25S13.24 11.25 12 11.25 9.75 10.24 9.75 9S10.76 6.75 12 6.75zM17 17H7v-1.5c0-1.67 3.33-2.5 5-2.5s5 .83 5 2.5V17z"/>
+                                </svg>
+                            </div>
+                            Kontaktlarim
+                        </h3>
+                        <button onclick="addContact()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            Kontakt qo'shish
+                        </button>
+                    </div>
+                    <div id="contactsList" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pastki navigatsiya -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 z-40">
+        <div class="flex justify-around items-center max-w-2xl mx-auto">
+            <button onclick="showSection('profile')" id="profileTab" class="flex flex-col items-center py-2 px-2 rounded-lg tab-active transition-all">
+                <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                <span class="text-xs font-medium">Profil</span>
+            </button>
+            
+            <button onclick="showSection('settings')" id="settingsTab" class="flex flex-col items-center py-2 px-2 rounded-lg tab-inactive transition-all">
+                <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.69,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                </svg>
+                <span class="text-xs font-medium">Sozlamalar</span>
+            </button>
+            
+            <button onclick="showSection('data')" id="dataTab" class="flex flex-col items-center py-2 px-2 rounded-lg tab-inactive transition-all">
+                <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                </svg>
+                <span class="text-xs font-medium">Ma'lumotlar</span>
+            </button>
+
+            <button onclick="showSection('music')" id="musicTab" class="flex flex-col items-center py-2 px-2 rounded-lg tab-inactive transition-all">
+                <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
+                <span class="text-xs font-medium">Musiqa</span>
+            </button>
+
+            <button onclick="showSection('photos')" id="photosTab" class="flex flex-col items-center py-2 px-2 rounded-lg tab-inactive transition-all">
+                <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                </svg>
+                <span class="text-xs font-medium">Rasmlar</span>
+            </button>
+
+            <button onclick="showSection('videos')" id="videosTab" class="flex flex-col items-center py-2 px-2 rounded-lg tab-inactive transition-all">
+                <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                </svg>
+                <span class="text-xs font-medium">Videolar</span>
+            </button>
+        </div>
+    </div>
+
+
+
+    <!-- Ma'lumot qo'shish modali -->
+    <div id="addModal" class="fixed inset-0 bg-black bg-opacity-30 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md mx-auto border border-gray-100 max-h-[90vh] overflow-y-auto">
+            <h4 class="text-lg font-semibold text-gray-800 mb-4" id="modalTitle">Yangi ma'lumot</h4>
+            <div class="space-y-4" id="modalFields">
+                <!-- Modal maydonlari bu yerda dinamik ravishda yaratiladi -->
+            </div>
+            <div class="flex gap-3 pt-4">
+                <button id="saveInfoBtn" class="flex-1 bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                    Saqlash
+                </button>
+                <button id="cancelInfoBtn" class="px-4 py-3 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors">
+                    Bekor qilish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batafsil ko'rish modali -->
+    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-30 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl mx-auto border border-gray-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-4">
+                <h4 class="text-xl font-semibold text-gray-800" id="detailTitle">Ma'lumot</h4>
+                <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="detailContent" class="space-y-4">
+                <!-- Batafsil ma'lumot bu yerda ko'rsatiladi -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Rasm ko'rish modali -->
+    <div id="photoViewModal" class="fixed inset-0 bg-black bg-opacity-90 hidden items-center justify-center z-50">
+        <div class="relative w-full h-full flex items-center justify-center p-4">
+            <button onclick="closePhotoModal()" class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+            
+            <button onclick="previousPhoto()" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+            </button>
+            
+            <button onclick="nextPhoto()" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </button>
+            
+            <div class="relative max-w-full max-h-full">
+                <img id="modalPhoto" class="max-w-full max-h-full object-contain cursor-zoom-in" onclick="toggleZoom()" alt="Rasm">
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded">
+                    <span id="photoCounter">1 / 1</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video ko'rish modali -->
+    <div id="videoViewModal" class="fixed inset-0 bg-black bg-opacity-90 hidden items-center justify-center z-50">
+        <div class="relative w-full h-full flex items-center justify-center p-4">
+            <button onclick="closeVideoModal()" class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+            
+            <button onclick="previousVideo()" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+            </button>
+            
+            <button onclick="nextVideo()" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 transition-colors">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </button>
+            
+            <button onclick="toggleVideoZoom()" class="absolute top-4 left-4 text-white hover:text-gray-300 transition-colors z-10">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"/>
+                </svg>
+            </button>
+            
+            <div class="relative max-w-full max-h-full">
+                <video id="modalVideo" class="max-w-full max-h-full object-contain" controls>
+                    <source src="" type="video/mp4">
+                    Brauzeringiz video fayllarni qo'llab-quvvatlamaydi.
+                </video>
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded">
+                    <span id="videoCounter">1 / 1</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kontakt qo'shish modali -->
+    <div id="contactModal" class="fixed inset-0 bg-black bg-opacity-30 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md mx-auto border border-gray-100">
+            <h4 class="text-lg font-semibold text-gray-800 mb-4">Yangi kontakt qo'shish</h4>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Ism</label>
+                    <input type="text" id="contactName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="To'liq ism">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Telefon raqam</label>
+                    <input type="tel" id="contactPhone" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="+998 XX XXX XX XX">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Email (ixtiyoriy)</label>
+                    <input type="email" id="contactEmail" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="email@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Izoh (ixtiyoriy)</label>
+                    <textarea id="contactNote" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all resize-none" placeholder="Qo'shimcha ma'lumot..."></textarea>
+                </div>
+            </div>
+            <div class="flex gap-3 pt-4">
+                <button id="saveContactBtn" class="flex-1 bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 transition-colors">
+                    Saqlash
+                </button>
+                <button id="cancelContactBtn" class="px-4 py-3 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors">
+                    Bekor qilish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login oynasi -->
+    <div id="loginScreen" class="fixed inset-0 bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 w-full max-w-md mx-4 card-shadow">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Tizimga kirish</h2>
+                <p class="text-gray-600">Profilingizga kirish uchun ma'lumotlaringizni kiriting</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Login</label>
+                    <input type="text" id="loginUsername" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="Loginni kiriting" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Parol</label>
+                    <div class="relative">
+                        <input type="password" id="loginPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12" placeholder="Parolni kiriting" required>
+                        <button type="button" id="togglePassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                            <svg id="eyeIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="loginError" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        Login yoki parol noto'g'ri!
+                    </div>
+                </div>
+                
+                <button type="submit" id="loginBtn" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all">
+                    Kirish
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-xs text-gray-500">
+                    Xavfsiz kirish tizimi
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Login ma'lumotlari
+        const VALID_USERNAME = 'ogabekkamolov710';
+        const VALID_PASSWORD = 'q1w2e3r4t5KAMOLOV';
+        
+        // Ma'lumotlarni saqlash uchun localStorage dan foydalanish
+        let profileData = JSON.parse(localStorage.getItem('profileData')) || {};
+        let personalInfoData = JSON.parse(localStorage.getItem('personalInfoData')) || [];
+        let studentInfoData = JSON.parse(localStorage.getItem('studentInfoData')) || [];
+        let passportInfoData = JSON.parse(localStorage.getItem('passportInfoData')) || [];
+        let otherInfoData = JSON.parse(localStorage.getItem('otherInfoData')) || [];
+        let musicData = JSON.parse(localStorage.getItem('musicData')) || [];
+        let photosData = JSON.parse(localStorage.getItem('photosData')) || [];
+        let videosData = JSON.parse(localStorage.getItem('videosData')) || [];
+        let contactsData = JSON.parse(localStorage.getItem('contactsData')) || [];
+        let currentInfoType = '';
+        let currentPhotoIndex = 0;
+        let currentVideoIndex = 0;
+        let isZoomed = false;
+        let isVideoZoomed = false;
+        let currentEditingContact = null;
+        
+        // Login holatini tekshirish
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.body.style.overflow = 'auto';
+            } else {
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        // Parolni ko'rsatish/yashirish
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('loginPassword');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+            }
+        });
+        
+        // Login form yuborish
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Yuklash holati
+            loginBtn.textContent = 'Tekshirilmoqda...';
+            loginBtn.disabled = true;
+            
+            setTimeout(() => {
+                if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                    // Muvaffaqiyatli kirish
+                    localStorage.setItem('isLoggedIn', 'true');
+                    errorDiv.classList.add('hidden');
+                    
+                    loginBtn.textContent = '✓ Muvaffaqiyatli!';
+                    loginBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    loginBtn.classList.add('bg-green-600');
+                    
+                    setTimeout(() => {
+                        document.getElementById('loginScreen').style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                        
+                        // Ma'lumotlarni yuklash
+                        loadProfileData();
+                        loadAllData();
+                    }, 1000);
+                } else {
+                    // Noto'g'ri ma'lumotlar
+                    errorDiv.classList.remove('hidden');
+                    loginBtn.textContent = 'Kirish';
+                    loginBtn.disabled = false;
+                    
+                    // Inputlarni tozalash
+                    document.getElementById('loginUsername').value = '';
+                    document.getElementById('loginPassword').value = '';
+                    document.getElementById('loginUsername').focus();
+                }
+            }, 1500);
+        });
+        
+        // Chiqish funksiyasi
+        function logout() {
+            if (confirm('Tizimdan chiqishni xohlaysizmi?')) {
+                localStorage.removeItem('isLoggedIn');
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                
+                // Login formani tozalash
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginError').classList.add('hidden');
+                
+                const loginBtn = document.getElementById('loginBtn');
+                loginBtn.textContent = 'Kirish';
+                loginBtn.disabled = false;
+                loginBtn.classList.remove('bg-green-600');
+                loginBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+        }
+        
+        // Sahifa yuklanganda login holatini tekshirish
+        checkLoginStatus();
+
+        // Teppadagi oynalarni boshqarish
+        function showTopSection(sectionName) {
+            // Barcha oynalarni yashirish
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Barcha pastki tablarni faolsizlashtirish
+            document.querySelectorAll('[id$="Tab"]').forEach(tab => {
+                if (!tab.id.includes('Top')) {
+                    tab.classList.remove('tab-active');
+                    tab.classList.add('tab-inactive');
+                }
+            });
+            
+            // Barcha teppadagi tablarni faolsizlashtirish
+            document.querySelectorAll('[id$="TopTab"]').forEach(tab => {
+                tab.classList.remove('bg-blue-100');
+                tab.classList.add('hover:bg-blue-50');
+            });
+            
+            // Tanlangan teppadagi tabni faollashtirish
+            const activeTopTab = document.getElementById(sectionName + 'TopTab');
+            if (activeTopTab) {
+                activeTopTab.classList.add('bg-blue-100');
+                activeTopTab.classList.remove('hover:bg-blue-50');
+            }
+            
+            // Tanlangan oynani ko'rsatish
+            const targetSection = document.getElementById(sectionName + 'Section');
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            
+            // Iframe'larni yuklash
+            setTimeout(() => {
+                if (sectionName === 'mygov') {
+                    const frame = document.getElementById('mygovFrame');
+                    if (!frame.src) {
+                        refreshMygov();
+                    }
+                } else if (sectionName === 'telegram') {
+                    const frame = document.getElementById('telegramFrame');
+                    if (!frame.src) {
+                        refreshTelegram();
+                    }
+                } else if (sectionName === 'instagram') {
+                    const frame = document.getElementById('instagramFrame');
+                    if (!frame.src) {
+                        refreshInstagram();
+                    }
+                }
+            }, 100);
+            
+            // Agar kontaktlar oynasi ochilsa, kontaktlarni yuklash
+            if (sectionName === 'contacts') {
+                loadContactsList();
+            }
+        }
+
+        // Qurilma turini aniqlash
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+        }
+
+        // Iframe yangilash funksiyalari
+        function refreshMygov() {
+            const frame = document.getElementById('mygovFrame');
+            frame.src = '';
+            setTimeout(() => {
+                if (isMobileDevice()) {
+                    // Mobil qurilmalar uchun
+                    frame.src = 'https://my.gov.uz';
+                } else {
+                    // Desktop uchun
+                    frame.src = 'https://my.gov.uz';
+                }
+            }, 100);
+        }
+
+        function refreshTelegram() {
+            const frame = document.getElementById('telegramFrame');
+            frame.src = '';
+            setTimeout(() => {
+                if (isMobileDevice()) {
+                    // Mobil qurilmalar uchun Telegram web
+                    frame.src = 'https://web.telegram.org/a/';
+                } else {
+                    // Desktop uchun Telegram web
+                    frame.src = 'https://web.telegram.org/k/';
+                }
+            }, 100);
+        }
+
+        function refreshInstagram() {
+            const frame = document.getElementById('instagramFrame');
+            frame.src = '';
+            setTimeout(() => {
+                if (isMobileDevice()) {
+                    // Mobil qurilmalar uchun Instagram web
+                    frame.src = 'https://www.instagram.com/';
+                } else {
+                    // Desktop uchun Instagram web
+                    frame.src = 'https://www.instagram.com/';
+                }
+            }, 100);
+        }
+
+        // Sahifa yuklanganda iframe'larni yuklash
+        function loadIframes() {
+            // MyGov iframe'ini yuklash
+            setTimeout(() => {
+                if (document.getElementById('mygovSection').classList.contains('active')) {
+                    refreshMygov();
+                }
+            }, 1000);
+        }
+
+        // Oynalarni boshqarish
+        function showSection(sectionName) {
+            // Barcha oynalarni yashirish
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Barcha tablarni faolsizlashtirish
+            document.querySelectorAll('[id$="Tab"]').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('tab-inactive');
+            });
+            
+            // Tanlangan oynani ko'rsatish
+            document.getElementById(sectionName + 'Section').classList.add('active');
+            document.getElementById(sectionName + 'Tab').classList.add('tab-active');
+            document.getElementById(sectionName + 'Tab').classList.remove('tab-inactive');
+        }
+
+        // Sahifa yuklanganda ma'lumotlarni ko'rsatish
+        function loadProfileData() {
+            if (profileData.firstName) {
+                document.getElementById('firstName').value = profileData.firstName || '';
+                document.getElementById('lastName').value = profileData.lastName || '';
+                document.getElementById('jobTitle').value = profileData.jobTitle || '';
+                document.getElementById('email').value = profileData.email || '';
+                document.getElementById('phone').value = profileData.phone || '';
+                document.getElementById('address').value = profileData.address || '';
+                document.getElementById('birthDate').value = profileData.birthDate || '';
+                document.getElementById('bio').value = profileData.bio || '';
+                
+                updateProfileDisplay();
+            }
+            
+            // Profil rasmini yuklash
+            if (profileData.profileImage) {
+                document.getElementById('profileImage').src = profileData.profileImage;
+                document.getElementById('profileImage').classList.remove('hidden');
+                document.getElementById('profilePlaceholder').classList.add('hidden');
+                
+                document.getElementById('settingsProfileImage').src = profileData.profileImage;
+                document.getElementById('settingsProfileImage').classList.remove('hidden');
+                document.getElementById('settingsProfilePlaceholder').classList.add('hidden');
+            }
+            
+            loadAllInfoSections();
+        }
+
+        // Profil ko'rinishini yangilash
+        function updateProfileDisplay() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const fullName = `${firstName} ${lastName}`.trim() || 'Ismingiz';
+            
+            document.getElementById('displayName').textContent = fullName;
+            document.getElementById('displayTitle').textContent = document.getElementById('jobTitle').value || 'Lavozimingiz';
+            document.getElementById('displayEmail').textContent = document.getElementById('email').value || 'email@example.com';
+            document.getElementById('displayPhone').textContent = document.getElementById('phone').value || '+998 XX XXX XX XX';
+            document.getElementById('displayLocation').textContent = document.getElementById('address').value || 'Manzilingiz';
+            document.getElementById('displayBirthDate').textContent = document.getElementById('birthDate').value || 'Kiritilmagan';
+            document.getElementById('displayBio').textContent = document.getElementById('bio').value || 'Hozircha ma\'lumot kiritilmagan';
+        }
+
+        // Rasm yuklash
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+                    document.getElementById('profileImage').src = imageData;
+                    document.getElementById('profileImage').classList.remove('hidden');
+                    document.getElementById('profilePlaceholder').classList.add('hidden');
+                    
+                    document.getElementById('settingsProfileImage').src = imageData;
+                    document.getElementById('settingsProfileImage').classList.remove('hidden');
+                    document.getElementById('settingsProfilePlaceholder').classList.add('hidden');
+                    
+                    // Rasmni saqlash
+                    profileData.profileImage = imageData;
+                    localStorage.setItem('profileData', JSON.stringify(profileData));
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // PDF yuklab olish
+        document.getElementById('downloadPDF').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // PDF sarlavhasi
+            doc.setFontSize(20);
+            doc.text('Shaxsiy Profil Ma\'lumotnomasi', 20, 30);
+            
+            let yPosition = 50;
+            
+            // Asosiy ma'lumotlar
+            doc.setFontSize(14);
+            doc.text(`Ism: ${profileData.firstName || 'Kiritilmagan'}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Familiya: ${profileData.lastName || 'Kiritilmagan'}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Lavozim: ${profileData.jobTitle || 'Kiritilmagan'}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Email: ${profileData.email || 'Kiritilmagan'}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Telefon: ${profileData.phone || 'Kiritilmagan'}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Manzil: ${profileData.address || 'Kiritilmagan'}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Tug'ilgan sana: ${profileData.birthDate || 'Kiritilmagan'}`, 20, yPosition);
+            yPosition += 15;
+            
+            if (profileData.bio) {
+                doc.text('Haqida:', 20, yPosition);
+                yPosition += 10;
+                const bioLines = doc.splitTextToSize(profileData.bio, 170);
+                doc.text(bioLines, 20, yPosition);
+                yPosition += bioLines.length * 7 + 10;
+            }
+            
+            // Barcha qo'shimcha ma'lumotlar
+            const allInfoSections = [
+                { title: 'Shaxsiy ma\'lumotlar', data: personalInfoData },
+                { title: 'Talaba ma\'lumotlari', data: studentInfoData },
+                { title: 'Pasport ma\'lumotlari', data: passportInfoData },
+                { title: 'Boshqa ma\'lumotlar', data: otherInfoData }
+            ];
+            
+            allInfoSections.forEach(section => {
+                if (section.data.length > 0) {
+                    yPosition += 10;
+                    doc.setFontSize(16);
+                    doc.text(section.title + ':', 20, yPosition);
+                    yPosition += 15;
+                    
+                    doc.setFontSize(12);
+                    section.data.forEach(info => {
+                        doc.text(`• ${info.title}:`, 20, yPosition);
+                        yPosition += 7;
+                        const contentLines = doc.splitTextToSize(info.content, 160);
+                        doc.text(contentLines, 25, yPosition);
+                        yPosition += contentLines.length * 7 + 5;
+                    });
+                }
+            });
+            
+            // PDF ni yuklab olish
+            const fileName = `${profileData.firstName || 'Profil'}_${profileData.lastName || 'Ma\'lumotlari'}.pdf`;
+            doc.save(fileName);
+        });
+
+        // Form yuborilganda
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            profileData = {
+                ...profileData,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                jobTitle: document.getElementById('jobTitle').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                birthDate: document.getElementById('birthDate').value,
+                bio: document.getElementById('bio').value
+            };
+            
+            localStorage.setItem('profileData', JSON.stringify(profileData));
+            updateProfileDisplay();
+            
+            // Muvaffaqiyat xabari
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '✓ Saqlandi!';
+            submitBtn.classList.remove('bg-blue-500');
+            submitBtn.classList.add('bg-green-500');
+            
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.classList.remove('bg-green-500');
+                submitBtn.classList.add('bg-blue-500');
+            }, 2000);
+        });
+
+        // Tozalash tugmasi
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            if (confirm('Barcha ma\'lumotlarni o\'chirishni xohlaysizmi?')) {
+                // Formani tozalash
+                document.getElementById('profileForm').reset();
+                
+                // Profil ma'lumotlarini tozalash
+                profileData = {};
+                localStorage.removeItem('profileData');
+                
+                // Profil rasmini tozalash
+                document.getElementById('profileImage').classList.add('hidden');
+                document.getElementById('profilePlaceholder').classList.remove('hidden');
+                document.getElementById('settingsProfileImage').classList.add('hidden');
+                document.getElementById('settingsProfilePlaceholder').classList.remove('hidden');
+                
+                // Ko'rinishni yangilash
+                updateProfileDisplay();
+                
+                // Sahifani yangilash
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            }
+        });
+
+        // Ma'lumot turlarini qo'shish funksiyalari
+        function addPersonalInfo() {
+            currentInfoType = 'personal';
+            showModal('Shaxsiy ma\'lumot qo\'shish', [
+                { label: 'Sarlavha', type: 'text', placeholder: 'Masalan: Oila holati, Millati...' },
+                { label: 'Ma\'lumot', type: 'textarea', placeholder: 'Batafsil ma\'lumot...' },
+                { label: 'Rasm yuklash', type: 'file', accept: 'image/*', placeholder: 'Rasm tanlang...' },
+                { label: 'PDF yuklash', type: 'file', accept: '.pdf', placeholder: 'PDF tanlang...' }
+            ]);
+        }
+
+        function addStudentInfo() {
+            currentInfoType = 'student';
+            showModal('Talaba ma\'lumoti qo\'shish', [
+                { label: 'Sarlavha', type: 'text', placeholder: 'Masalan: Universitet, Fakultet...' },
+                { label: 'Ma\'lumot', type: 'textarea', placeholder: 'Batafsil ma\'lumot...' },
+                { label: 'Rasm yuklash', type: 'file', accept: 'image/*', placeholder: 'Rasm tanlang...' },
+                { label: 'PDF yuklash', type: 'file', accept: '.pdf', placeholder: 'PDF tanlang...' }
+            ]);
+        }
+
+        function addPassportInfo() {
+            currentInfoType = 'passport';
+            showModal('Pasport ma\'lumoti qo\'shish', [
+                { label: 'Sarlavha', type: 'text', placeholder: 'Masalan: Pasport seriyasi, Berilgan sana...' },
+                { label: 'Ma\'lumot', type: 'textarea', placeholder: 'Batafsil ma\'lumot...' },
+                { label: 'Rasm yuklash', type: 'file', accept: 'image/*', placeholder: 'Rasm tanlang...' },
+                { label: 'PDF yuklash', type: 'file', accept: '.pdf', placeholder: 'PDF tanlang...' }
+            ]);
+        }
+
+        function addOtherInfo() {
+            currentInfoType = 'other';
+            showModal('Boshqa ma\'lumot qo\'shish', [
+                { label: 'Sarlavha', type: 'text', placeholder: 'Masalan: Hobby, Ko\'nikma...' },
+                { label: 'Ma\'lumot', type: 'textarea', placeholder: 'Batafsil ma\'lumot...' },
+                { label: 'Rasm yuklash', type: 'file', accept: 'image/*', placeholder: 'Rasm tanlang...' },
+                { label: 'PDF yuklash', type: 'file', accept: '.pdf', placeholder: 'PDF tanlang...' }
+            ]);
+        }
+
+        // Modal oynani ko'rsatish
+        function showModal(title, fields) {
+            document.getElementById('modalTitle').textContent = title;
+            const fieldsContainer = document.getElementById('modalFields');
+            fieldsContainer.innerHTML = '';
+            
+            fields.forEach((field, index) => {
+                const fieldDiv = document.createElement('div');
+                let fieldHTML = '';
+                
+                if (field.type === 'textarea') {
+                    fieldHTML = `<textarea id="modalField${index}" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all resize-none" placeholder="${field.placeholder}"></textarea>`;
+                } else if (field.type === 'file') {
+                    fieldHTML = `
+                        <div class="relative">
+                            <input type="file" id="modalField${index}" accept="${field.accept || ''}" class="hidden">
+                            <button type="button" onclick="document.getElementById('modalField${index}').click()" class="w-full px-4 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all text-left text-gray-500">
+                                ${field.placeholder}
+                            </button>
+                            <div id="fileName${index}" class="mt-2 text-sm text-green-600 hidden"></div>
+                        </div>
+                    `;
+                } else {
+                    fieldHTML = `<input type="${field.type}" id="modalField${index}" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="${field.placeholder}">`;
+                }
+                
+                fieldDiv.innerHTML = `
+                    <label class="block text-sm font-medium text-gray-600 mb-2">${field.label}</label>
+                    ${fieldHTML}
+                `;
+                fieldsContainer.appendChild(fieldDiv);
+                
+                // File input uchun event listener qo'shish
+                if (field.type === 'file') {
+                    document.getElementById(`modalField${index}`).addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        const fileNameDiv = document.getElementById(`fileName${index}`);
+                        if (file) {
+                            fileNameDiv.textContent = `✓ ${file.name}`;
+                            fileNameDiv.classList.remove('hidden');
+                        } else {
+                            fileNameDiv.classList.add('hidden');
+                        }
+                    });
+                }
+            });
+            
+            document.getElementById('addModal').classList.remove('hidden');
+            document.getElementById('addModal').classList.add('flex');
+        }
+
+        // Modal yopish
+        document.getElementById('cancelInfoBtn').addEventListener('click', function() {
+            document.getElementById('addModal').classList.add('hidden');
+            document.getElementById('addModal').classList.remove('flex');
+        });
+
+        // Ma'lumot saqlash
+        document.getElementById('saveInfoBtn').addEventListener('click', function() {
+            const title = document.getElementById('modalField0').value.trim();
+            const content = document.getElementById('modalField1').value.trim();
+            
+            if (title && content) {
+                const newInfo = { 
+                    title, 
+                    content,
+                    id: Date.now() + Math.random() // Unique ID
+                };
+                
+                // Rasm va PDF fayllarini saqlash
+                const imageFile = document.getElementById('modalField2').files[0];
+                const pdfFile = document.getElementById('modalField3').files[0];
+                
+                const processFiles = async () => {
+                    if (imageFile) {
+                        const imageData = await fileToBase64(imageFile);
+                        newInfo.image = {
+                            data: imageData,
+                            name: imageFile.name,
+                            type: imageFile.type
+                        };
+                    }
+                    
+                    if (pdfFile) {
+                        const pdfData = await fileToBase64(pdfFile);
+                        newInfo.pdf = {
+                            data: pdfData,
+                            name: pdfFile.name,
+                            type: pdfFile.type
+                        };
+                    }
+                    
+                    switch(currentInfoType) {
+                        case 'personal':
+                            personalInfoData.push(newInfo);
+                            localStorage.setItem('personalInfoData', JSON.stringify(personalInfoData));
+                            break;
+                        case 'student':
+                            studentInfoData.push(newInfo);
+                            localStorage.setItem('studentInfoData', JSON.stringify(studentInfoData));
+                            break;
+                        case 'passport':
+                            passportInfoData.push(newInfo);
+                            localStorage.setItem('passportInfoData', JSON.stringify(passportInfoData));
+                            break;
+                        case 'other':
+                            otherInfoData.push(newInfo);
+                            localStorage.setItem('otherInfoData', JSON.stringify(otherInfoData));
+                            break;
+                    }
+                    
+                    loadAllInfoSections();
+                    
+                    // Modal yopish
+                    document.getElementById('addModal').classList.add('hidden');
+                    document.getElementById('addModal').classList.remove('flex');
+                };
+                
+                processFiles();
+            } else {
+                alert('Iltimos, sarlavha va ma\'lumot maydonlarini to\'ldiring!');
+            }
+        });
+
+        // File ni base64 ga o'tkazish
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Barcha ma'lumot bo'limlarini yuklash
+        function loadAllInfoSections() {
+            loadInfoSection('personalInfo', personalInfoData, 'personal');
+            loadInfoSection('studentInfo', studentInfoData, 'student');
+            loadInfoSection('passportInfo', passportInfoData, 'passport');
+            loadInfoSection('otherInfo', otherInfoData, 'other');
+        }
+
+        // Ma'lumot bo'limini yuklash
+        function loadInfoSection(containerId, data, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-6">Hozircha ma\'lumotlar yo\'q</p>';
+                return;
+            }
+            
+            data.forEach((info, index) => {
+                const infoCard = document.createElement('div');
+                infoCard.className = 'bg-gray-50 rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors';
+                
+                let attachmentsHTML = '';
+                if (info.image || info.pdf) {
+                    attachmentsHTML = `
+                        <div class="flex gap-2 mt-3 flex-wrap">
+                            ${info.image ? `
+                                <button onclick="downloadFile('${info.image.data}', '${info.image.name}', event)" class="flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs hover:bg-blue-200 transition-colors">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                    </svg>
+                                    Rasm
+                                </button>
+                            ` : ''}
+                            ${info.pdf ? `
+                                <button onclick="downloadFile('${info.pdf.data}', '${info.pdf.name}', event)" class="flex items-center px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs hover:bg-red-200 transition-colors">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                    </svg>
+                                    PDF
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+                
+                infoCard.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1" onclick="showDetailModal('${type}', ${index})">
+                            <h5 class="font-medium text-gray-800 mb-2">${info.title}</h5>
+                            <p class="text-gray-600 text-sm line-clamp-2">${info.content}</p>
+                            ${attachmentsHTML}
+                        </div>
+                        <button onclick="removeInfoItem('${type}', ${index})" class="text-gray-400 hover:text-red-500 ml-4 transition-colors">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(infoCard);
+            });
+        }
+
+        // Ma'lumotni o'chirish
+        function removeInfoItem(type, index) {
+            if (confirm('Bu ma\'lumotni o\'chirishni xohlaysizmi?')) {
+                switch(type) {
+                    case 'personal':
+                        personalInfoData.splice(index, 1);
+                        localStorage.setItem('personalInfoData', JSON.stringify(personalInfoData));
+                        break;
+                    case 'student':
+                        studentInfoData.splice(index, 1);
+                        localStorage.setItem('studentInfoData', JSON.stringify(studentInfoData));
+                        break;
+                    case 'passport':
+                        passportInfoData.splice(index, 1);
+                        localStorage.setItem('passportInfoData', JSON.stringify(passportInfoData));
+                        break;
+                    case 'other':
+                        otherInfoData.splice(index, 1);
+                        localStorage.setItem('otherInfoData', JSON.stringify(otherInfoData));
+                        break;
+                }
+                loadAllInfoSections();
+            }
+        }
+
+        // File yuklab olish funksiyasi
+        function downloadFile(fileData, fileName, event) {
+            event.stopPropagation();
+            const link = document.createElement('a');
+            link.href = fileData;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Batafsil modal ko'rsatish
+        function showDetailModal(type, index) {
+            let data;
+            switch(type) {
+                case 'personal':
+                    data = personalInfoData[index];
+                    break;
+                case 'student':
+                    data = studentInfoData[index];
+                    break;
+                case 'passport':
+                    data = passportInfoData[index];
+                    break;
+                case 'other':
+                    data = otherInfoData[index];
+                    break;
+            }
+            
+            if (!data) return;
+            
+            document.getElementById('detailTitle').textContent = data.title;
+            
+            let contentHTML = `
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h5 class="font-medium text-gray-800 mb-2">Ma'lumot:</h5>
+                    <p class="text-gray-700 whitespace-pre-wrap">${data.content}</p>
+                </div>
+            `;
+            
+            if (data.image) {
+                contentHTML += `
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h5 class="font-medium text-gray-800 mb-3">Rasm:</h5>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <img src="${data.image.data}" alt="Yuklangan rasm" class="max-w-full h-auto rounded-lg border border-gray-200 max-h-64 object-contain">
+                            <button onclick="downloadFile('${data.image.data}', '${data.image.name}', event)" class="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors h-fit">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
+                                </svg>
+                                Yuklab olish
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (data.pdf) {
+                contentHTML += `
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h5 class="font-medium text-gray-800 mb-3">PDF fayl:</h5>
+                        <div class="flex items-center justify-between bg-white p-3 rounded border border-gray-200">
+                            <div class="flex items-center">
+                                <svg class="w-8 h-8 text-red-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                </svg>
+                                <span class="text-gray-700 font-medium">${data.pdf.name}</span>
+                            </div>
+                            <button onclick="downloadFile('${data.pdf.data}', '${data.pdf.name}', event)" class="flex items-center px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
+                                </svg>
+                                Yuklab olish
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('detailContent').innerHTML = contentHTML;
+            document.getElementById('detailModal').classList.remove('hidden');
+            document.getElementById('detailModal').classList.add('flex');
+        }
+
+        // Batafsil modal yopish
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+            document.getElementById('detailModal').classList.remove('flex');
+        }
+
+        // Musiqa qo'shish
+        function addMusic() {
+            const title = prompt('Qo\'shiq nomi:');
+            const artist = prompt('Ijrochi:');
+            
+            if (title && artist) {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'audio/*';
+                fileInput.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const musicItem = {
+                                id: Date.now(),
+                                title: title,
+                                artist: artist,
+                                audioData: e.target.result,
+                                fileName: file.name
+                            };
+                            musicData.push(musicItem);
+                            localStorage.setItem('musicData', JSON.stringify(musicData));
+                            loadMusicList();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                };
+                fileInput.click();
+            }
+        }
+
+        // Musiqa ro'yxatini yuklash
+        function loadMusicList() {
+            const container = document.getElementById('musicList');
+            container.innerHTML = '';
+            
+            if (musicData.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-6">Hozircha musiqalar yo\'q</p>';
+                return;
+            }
+            
+            musicData.forEach((music, index) => {
+                const musicCard = document.createElement('div');
+                musicCard.className = 'bg-gray-50 rounded-lg p-4 border border-gray-100';
+                musicCard.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <h5 class="font-medium text-gray-800">${music.title}</h5>
+                            <p class="text-gray-600 text-sm">${music.artist}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="playMusic(${index})" class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </button>
+                            <button onclick="removeMusic(${index})" class="text-gray-400 hover:text-red-500 transition-colors">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <audio id="audio${index}" class="w-full mt-3" controls>
+                        <source src="${music.audioData}" type="audio/mpeg">
+                        Brauzeringiz audio fayllarni qo'llab-quvvatlamaydi.
+                    </audio>
+                `;
+                container.appendChild(musicCard);
+            });
+        }
+
+        // Musiqa ijro etish
+        function playMusic(index) {
+            const audio = document.getElementById(`audio${index}`);
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
+        // Musiqani o'chirish
+        function removeMusic(index) {
+            if (confirm('Bu musiqani o\'chirishni xohlaysizmi?')) {
+                musicData.splice(index, 1);
+                localStorage.setItem('musicData', JSON.stringify(musicData));
+                loadMusicList();
+            }
+        }
+
+        // Rasm qo'shish
+        function addPhoto() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.multiple = true;
+            fileInput.onchange = function(e) {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const photoItem = {
+                            id: Date.now() + Math.random(),
+                            imageData: e.target.result,
+                            fileName: file.name,
+                            uploadDate: new Date().toLocaleDateString()
+                        };
+                        photosData.push(photoItem);
+                        localStorage.setItem('photosData', JSON.stringify(photosData));
+                        loadPhotoGrid();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+            fileInput.click();
+        }
+
+        // Rasm gridini yuklash
+        function loadPhotoGrid() {
+            const container = document.getElementById('photoGrid');
+            container.innerHTML = '';
+            
+            if (photosData.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-6 col-span-full">Hozircha rasmlar yo\'q</p>';
+                return;
+            }
+            
+            photosData.forEach((photo, index) => {
+                const photoCard = document.createElement('div');
+                photoCard.className = 'relative group cursor-pointer';
+                photoCard.innerHTML = `
+                    <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                        <img src="${photo.imageData}" alt="${photo.fileName}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-200">
+                    </div>
+                    <button onclick="removePhoto(${index})" class="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </button>
+                `;
+                photoCard.addEventListener('click', () => openPhotoModal(index));
+                container.appendChild(photoCard);
+            });
+        }
+
+        // Rasm modalini ochish
+        function openPhotoModal(index) {
+            currentPhotoIndex = index;
+            updatePhotoModal();
+            document.getElementById('photoViewModal').classList.remove('hidden');
+            document.getElementById('photoViewModal').classList.add('flex');
+        }
+
+        // Rasm modalini yangilash
+        function updatePhotoModal() {
+            const photo = photosData[currentPhotoIndex];
+            if (photo) {
+                document.getElementById('modalPhoto').src = photo.imageData;
+                document.getElementById('photoCounter').textContent = `${currentPhotoIndex + 1} / ${photosData.length}`;
+            }
+        }
+
+        // Rasm modalini yopish
+        function closePhotoModal() {
+            document.getElementById('photoViewModal').classList.add('hidden');
+            document.getElementById('photoViewModal').classList.remove('flex');
+            isZoomed = false;
+            document.getElementById('modalPhoto').style.transform = 'scale(1)';
+            document.getElementById('modalPhoto').classList.remove('cursor-zoom-out');
+            document.getElementById('modalPhoto').classList.add('cursor-zoom-in');
+        }
+
+        // Oldingi rasm
+        function previousPhoto() {
+            if (currentPhotoIndex > 0) {
+                currentPhotoIndex--;
+                updatePhotoModal();
+            }
+        }
+
+        // Keyingi rasm
+        function nextPhoto() {
+            if (currentPhotoIndex < photosData.length - 1) {
+                currentPhotoIndex++;
+                updatePhotoModal();
+            }
+        }
+
+        // Zoom funksiyasi
+        function toggleZoom() {
+            const img = document.getElementById('modalPhoto');
+            if (isZoomed) {
+                img.style.transform = 'scale(1)';
+                img.classList.remove('cursor-zoom-out');
+                img.classList.add('cursor-zoom-in');
+                isZoomed = false;
+            } else {
+                img.style.transform = 'scale(2)';
+                img.classList.remove('cursor-zoom-in');
+                img.classList.add('cursor-zoom-out');
+                isZoomed = true;
+            }
+        }
+
+        // Rasmni o'chirish
+        function removePhoto(index) {
+            if (confirm('Bu rasmni o\'chirishni xohlaysizmi?')) {
+                photosData.splice(index, 1);
+                localStorage.setItem('photosData', JSON.stringify(photosData));
+                loadPhotoGrid();
+            }
+        }
+
+        // Video qo'shish
+        function addVideo() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'video/*';
+            fileInput.multiple = true;
+            fileInput.onchange = function(e) {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const videoItem = {
+                            id: Date.now() + Math.random(),
+                            videoData: e.target.result,
+                            fileName: file.name,
+                            uploadDate: new Date().toLocaleDateString()
+                        };
+                        videosData.push(videoItem);
+                        localStorage.setItem('videosData', JSON.stringify(videosData));
+                        loadVideoGrid();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+            fileInput.click();
+        }
+
+        // Video gridini yuklash
+        function loadVideoGrid() {
+            const container = document.getElementById('videoGrid');
+            container.innerHTML = '';
+            
+            if (videosData.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-6 col-span-full">Hozircha videolar yo\'q</p>';
+                return;
+            }
+            
+            videosData.forEach((video, index) => {
+                const videoCard = document.createElement('div');
+                videoCard.className = 'relative group cursor-pointer';
+                videoCard.innerHTML = `
+                    <div class="aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden relative">
+                        <video class="w-full h-full object-cover" muted>
+                            <source src="${video.videoData}" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </div>
+                        <div class="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                            Video
+                        </div>
+                    </div>
+                    <button onclick="removeVideo(${index})" class="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </button>
+                `;
+                videoCard.addEventListener('click', () => openVideoModal(index));
+                container.appendChild(videoCard);
+            });
+        }
+
+        // Video modalini ochish
+        function openVideoModal(index) {
+            currentVideoIndex = index;
+            updateVideoModal();
+            document.getElementById('videoViewModal').classList.remove('hidden');
+            document.getElementById('videoViewModal').classList.add('flex');
+        }
+
+        // Video modalini yangilash
+        function updateVideoModal() {
+            const video = videosData[currentVideoIndex];
+            if (video) {
+                const modalVideo = document.getElementById('modalVideo');
+                modalVideo.src = video.videoData;
+                modalVideo.load();
+                document.getElementById('videoCounter').textContent = `${currentVideoIndex + 1} / ${videosData.length}`;
+            }
+        }
+
+        // Video modalini yopish
+        function closeVideoModal() {
+            const modalVideo = document.getElementById('modalVideo');
+            modalVideo.pause();
+            modalVideo.src = '';
+            document.getElementById('videoViewModal').classList.add('hidden');
+            document.getElementById('videoViewModal').classList.remove('flex');
+            isVideoZoomed = false;
+            modalVideo.style.transform = 'scale(1)';
+        }
+
+        // Oldingi video
+        function previousVideo() {
+            if (currentVideoIndex > 0) {
+                currentVideoIndex--;
+                updateVideoModal();
+            }
+        }
+
+        // Keyingi video
+        function nextVideo() {
+            if (currentVideoIndex < videosData.length - 1) {
+                currentVideoIndex++;
+                updateVideoModal();
+            }
+        }
+
+        // Video zoom funksiyasi
+        function toggleVideoZoom() {
+            const video = document.getElementById('modalVideo');
+            if (isVideoZoomed) {
+                video.style.transform = 'scale(1)';
+                isVideoZoomed = false;
+            } else {
+                video.style.transform = 'scale(1.5)';
+                isVideoZoomed = true;
+            }
+        }
+
+        // Videoni o'chirish
+        function removeVideo(index) {
+            if (confirm('Bu videoni o\'chirishni xohlaysizmi?')) {
+                videosData.splice(index, 1);
+                localStorage.setItem('videosData', JSON.stringify(videosData));
+                loadVideoGrid();
+            }
+        }
+
+        // Kontakt qo'shish
+        function addContact() {
+            currentEditingContact = null;
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactPhone').value = '';
+            document.getElementById('contactEmail').value = '';
+            document.getElementById('contactNote').value = '';
+            document.getElementById('contactModal').classList.remove('hidden');
+            document.getElementById('contactModal').classList.add('flex');
+        }
+
+        // Kontakt tahrirlash
+        function editContact(index) {
+            const contact = contactsData[index];
+            currentEditingContact = index;
+            document.getElementById('contactName').value = contact.name;
+            document.getElementById('contactPhone').value = contact.phone;
+            document.getElementById('contactEmail').value = contact.email || '';
+            document.getElementById('contactNote').value = contact.note || '';
+            document.getElementById('contactModal').classList.remove('hidden');
+            document.getElementById('contactModal').classList.add('flex');
+        }
+
+        // Kontakt saqlash
+        document.getElementById('saveContactBtn').addEventListener('click', function() {
+            const name = document.getElementById('contactName').value.trim();
+            const phone = document.getElementById('contactPhone').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const note = document.getElementById('contactNote').value.trim();
+            
+            if (name && phone) {
+                const contactData = {
+                    id: currentEditingContact !== null ? contactsData[currentEditingContact].id : Date.now(),
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    note: note,
+                    createdAt: currentEditingContact !== null ? contactsData[currentEditingContact].createdAt : new Date().toLocaleDateString()
+                };
+                
+                if (currentEditingContact !== null) {
+                    contactsData[currentEditingContact] = contactData;
+                } else {
+                    contactsData.push(contactData);
+                }
+                
+                localStorage.setItem('contactsData', JSON.stringify(contactsData));
+                loadContactsList();
+                
+                document.getElementById('contactModal').classList.add('hidden');
+                document.getElementById('contactModal').classList.remove('flex');
+            } else {
+                alert('Iltimos, ism va telefon raqamini kiriting!');
+            }
+        });
+
+        // Kontakt modal yopish
+        document.getElementById('cancelContactBtn').addEventListener('click', function() {
+            document.getElementById('contactModal').classList.add('hidden');
+            document.getElementById('contactModal').classList.remove('flex');
+        });
+
+        // Kontaktlar ro'yxatini yuklash
+        function loadContactsList() {
+            const container = document.getElementById('contactsList');
+            container.innerHTML = '';
+            
+            if (contactsData.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-6">Hozircha kontaktlar yo\'q</p>';
+                return;
+            }
+            
+            contactsData.forEach((contact, index) => {
+                const contactCard = document.createElement('div');
+                contactCard.className = 'bg-gray-50 rounded-lg p-4 border border-gray-100 hover:bg-gray-100 transition-colors';
+                
+                contactCard.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center flex-1">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-500 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-white font-semibold text-lg">${contact.name.charAt(0).toUpperCase()}</span>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-medium text-gray-800">${contact.name}</h5>
+                                <p class="text-gray-600 text-sm">${contact.phone}</p>
+                                ${contact.email ? `<p class="text-gray-500 text-xs">${contact.email}</p>` : ''}
+                                ${contact.note ? `<p class="text-gray-500 text-xs mt-1">${contact.note}</p>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 ml-4">
+                            <button onclick="callContact('${contact.phone}')" class="bg-green-500 text-white p-2 rounded-full hover:bg-green-600 transition-colors" title="Qo'ng'iroq qilish">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                                </svg>
+                            </button>
+                            <button onclick="openTelegram('${contact.phone}')" class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors" title="Telegramda yozish">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                                </svg>
+                            </button>
+                            <button onclick="editContact(${index})" class="bg-gray-500 text-white p-2 rounded-full hover:bg-gray-600 transition-colors" title="Tahrirlash">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                </svg>
+                            </button>
+                            <button onclick="removeContact(${index})" class="text-gray-400 hover:text-red-500 p-2 transition-colors" title="O'chirish">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(contactCard);
+            });
+        }
+
+        // Qo'ng'iroq qilish
+        function callContact(phone) {
+            window.open(`tel:${phone}`, '_self');
+        }
+
+        // Telegramda yozish
+        function openTelegram(phone) {
+            // Telefon raqamini tozalash (faqat raqamlar)
+            const cleanPhone = phone.replace(/\D/g, '');
+            window.open(`https://t.me/${cleanPhone}`, '_blank');
+        }
+
+        // Kontaktni o'chirish
+        function removeContact(index) {
+            if (confirm('Bu kontaktni o\'chirishni xohlaysizmi?')) {
+                contactsData.splice(index, 1);
+                localStorage.setItem('contactsData', JSON.stringify(contactsData));
+                loadContactsList();
+            }
+        }
+
+        // Barcha ma'lumotlarni yuklash
+        function loadAllData() {
+            loadAllInfoSections();
+            loadMusicList();
+            loadPhotoGrid();
+            loadVideoGrid();
+            loadContactsList();
+        }
+
+        // Sahifa yuklanganda ma'lumotlarni yuklash
+        loadProfileData();
+        loadAllData();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a3703c77ab5cc8',t:'MTc1NzA1MTMxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
