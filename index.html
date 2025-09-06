@@ -325,6 +325,79 @@
                             </button>
                         </div>
                     </form>
+                    
+                    <!-- Yangi bo'limlar boshqaruvi -->
+                    <div class="border-t border-gray-200 pt-6 mt-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Yangi bo'limlar yaratish</h4>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-4">
+                                <p class="text-sm text-gray-600">Yangi bo'limlar yarating va ular uchun xotira hajmini belgilang</p>
+                                <button onclick="addNewSection()" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                    </svg>
+                                    Yangi bo'lim
+                                </button>
+                            </div>
+                            <div id="customSectionsList" class="space-y-3">
+                                <!-- Yangi bo'limlar bu yerda ko'rsatiladi -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yangi bo'lim yaratish modali -->
+        <div id="newSectionModal" class="fixed inset-0 bg-black bg-opacity-30 hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-xl p-6 w-full max-w-md mx-auto border border-gray-100">
+                <h4 class="text-lg font-semibold text-gray-800 mb-4">Yangi bo'lim yaratish</h4>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Bo'lim nomi</label>
+                        <input type="text" id="newSectionName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all" placeholder="Masalan: Hujjatlar, Loyihalar...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Bo'lim turi</label>
+                        <select id="newSectionType" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none input-focus transition-all">
+                            <option value="files">Fayllar (Rasm, Video, PDF)</option>
+                            <option value="text">Matn ma'lumotlari</option>
+                            <option value="links">Havolalar</option>
+                            <option value="mixed">Aralash (Barcha turlar)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Xotira hajmi (GB)</label>
+                        <div class="flex items-center gap-3">
+                            <input type="range" id="sectionStorageRange" min="1" max="500" value="10" class="flex-1" oninput="updateStorageDisplay()">
+                            <span id="storageDisplay" class="text-sm font-medium text-gray-700 min-w-[60px]">10 GB</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">1 GB dan 500 GB gacha</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Rang tanlash</label>
+                        <div class="flex gap-2 flex-wrap">
+                            <button type="button" onclick="selectSectionColor('blue')" class="w-8 h-8 bg-blue-500 rounded-full border-2 border-transparent hover:border-gray-300 transition-colors" data-color="blue"></button>
+                            <button type="button" onclick="selectSectionColor('green')" class="w-8 h-8 bg-green-500 rounded-full border-2 border-transparent hover:border-gray-300 transition-colors" data-color="green"></button>
+                            <button type="button" onclick="selectSectionColor('purple')" class="w-8 h-8 bg-purple-500 rounded-full border-2 border-transparent hover:border-gray-300 transition-colors" data-color="purple"></button>
+                            <button type="button" onclick="selectSectionColor('red')" class="w-8 h-8 bg-red-500 rounded-full border-2 border-transparent hover:border-gray-300 transition-colors" data-color="red"></button>
+                            <button type="button" onclick="selectSectionColor('yellow')" class="w-8 h-8 bg-yellow-500 rounded-full border-2 border-transparent hover:border-gray-300 transition-colors" data-color="yellow"></button>
+                            <button type="button" onclick="selectSectionColor('indigo')" class="w-8 h-8 bg-indigo-500 rounded-full border-2 border-transparent hover:border-gray-300 transition-colors" data-color="indigo"></button>
+                            <button type="button" onclick="selectSectionColor('pink')" class="w-8 h-8 bg-pink-500 rounded-full border-2 border-transparent hover:border-gray-300 transition-colors" data-color="pink"></button>
+                            <button type="button" onclick="selectSectionColor('gray')" class="w-8 h-8 bg-gray-500 rounded-full border-2 border-transparent hover:border-gray-300 transition-colors" data-color="gray"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button id="createSectionBtn" class="flex-1 bg-purple-500 text-white py-3 px-4 rounded-lg hover:bg-purple-600 transition-colors">
+                        Bo'lim yaratish
+                    </button>
+                    <button id="cancelSectionBtn" class="px-4 py-3 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors">
+                        Bekor qilish
+                    </button>
+                </div>
+            </div>
+        </div>
                 </div>
             </div>
         </div>
@@ -1752,7 +1825,15 @@
             fileInput.multiple = true;
             fileInput.onchange = function(e) {
                 const files = Array.from(e.target.files);
-                files.forEach(file => {
+                let processedCount = 0;
+                
+                // Yuklash jarayonini ko'rsatish
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg z-50';
+                loadingDiv.textContent = `Musiqalar yuklanmoqda... 0/${files.length}`;
+                document.body.appendChild(loadingDiv);
+                
+                files.forEach((file, index) => {
                     // Fayl nomidan musiqa nomi va ijrochini ajratib olish
                     const fileName = file.name.replace(/\.[^/.]+$/, ""); // Kengaytmani olib tashlash
                     let title = fileName;
@@ -1768,17 +1849,36 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const musicItem = {
-                            id: Date.now() + Math.random(),
+                            id: Date.now() + Math.random() + index,
                             title: title,
                             artist: artist,
                             audioData: e.target.result,
                             fileName: file.name,
                             fileSize: (file.size / 1024 / 1024).toFixed(2) + ' MB',
-                            duration: '00:00'
+                            duration: '00:00',
+                            order: musicData.length + index // Tartib raqami
                         };
                         musicData.push(musicItem);
-                        localStorage.setItem('musicData', JSON.stringify(musicData));
-                        loadMusicList();
+                        processedCount++;
+                        
+                        // Yuklash holatini yangilash
+                        loadingDiv.textContent = `Musiqalar yuklanmoqda... ${processedCount}/${files.length}`;
+                        
+                        // Barcha fayllar yuklanganda
+                        if (processedCount === files.length) {
+                            localStorage.setItem('musicData', JSON.stringify(musicData));
+                            loadMusicList();
+                            
+                            // Muvaffaqiyat xabari
+                            loadingDiv.textContent = `✓ ${files.length} ta musiqa yuklandi!`;
+                            loadingDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg z-50';
+                            
+                            setTimeout(() => {
+                                if (document.body.contains(loadingDiv)) {
+                                    document.body.removeChild(loadingDiv);
+                                }
+                            }, 2000);
+                        }
                     };
                     reader.readAsDataURL(file);
                 });
@@ -1826,7 +1926,7 @@
                             </button>
                         </div>
                     </div>
-                    <audio id="audio${index}" class="w-full" controls preload="metadata" onloadedmetadata="updateDuration(${index})">
+                    <audio id="audio${index}" class="w-full" controls preload="metadata" onloadedmetadata="updateDuration(${index})" onended="playNextMusic(${index})">
                         <source src="${music.audioData}" type="audio/mpeg">
                         <source src="${music.audioData}" type="audio/wav">
                         <source src="${music.audioData}" type="audio/ogg">
@@ -1915,6 +2015,12 @@
                     </div>
                     <div class="p-2 flex justify-between items-center">
                         <p class="text-sm text-gray-600 truncate flex-1 mr-2">${photo.fileName}</p>
+                        <button onclick="downloadPhoto(${index})" class="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition-colors flex items-center gap-1 flex-shrink-0 mr-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
+                            </svg>
+                            Yuklab olish
+                        </button>
                         <button onclick="removePhoto(${index})" class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 transition-colors flex items-center gap-1 flex-shrink-0">
                             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
@@ -2133,6 +2239,18 @@
             }
         }
 
+        // Rasmni yuklab olish
+        function downloadPhoto(index) {
+            event.stopPropagation();
+            const photo = photosData[index];
+            const link = document.createElement('a');
+            link.href = photo.imageData;
+            link.download = photo.fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         // Rasmni o'chirish
         function removePhoto(index) {
             event.stopPropagation();
@@ -2306,22 +2424,29 @@
                         <div class="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
                             ${video.duration || video.fileSize || 'Video'}
                         </div>
-                        <div class="absolute top-2 right-2 flex gap-1">
-                            <button onclick="downloadVideo(${index})" class="bg-green-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-green-600" title="Yuklab olish">
+
+                    </div>
+                    <div class="p-2">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-800 truncate">${video.fileName}</p>
+                                <p class="text-xs text-gray-500">${video.uploadDate} • ${video.fileSize || ''}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="downloadVideo(${index})" class="flex-1 bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition-colors flex items-center justify-center gap-1">
                                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
                                 </svg>
+                                Yuklab olish
                             </button>
-                            <button onclick="removeVideo(${index})" class="bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600" title="O'chirish">
+                            <button onclick="removeVideo(${index})" class="flex-1 bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 transition-colors flex items-center justify-center gap-1">
                                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
                                 </svg>
+                                O'chirish
                             </button>
                         </div>
-                    </div>
-                    <div class="p-2">
-                        <p class="text-sm font-medium text-gray-800 truncate">${video.fileName}</p>
-                        <p class="text-xs text-gray-500">${video.uploadDate} • ${video.fileSize || ''}</p>
                     </div>
                 `;
                 videoCard.addEventListener('click', (e) => {
@@ -2699,12 +2824,203 @@
             loadContactsList();
         }
 
+        // Keyingi musiqani avtomatik ijro etish
+        function playNextMusic(currentIndex) {
+            // Barcha audio elementlarni to'xtatish
+            document.querySelectorAll('audio').forEach(audio => {
+                if (audio.id !== `audio${currentIndex}`) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            });
+            
+            // Keyingi musiqani topish
+            const nextIndex = currentIndex + 1;
+            if (nextIndex < musicData.length) {
+                const nextAudio = document.getElementById(`audio${nextIndex}`);
+                if (nextAudio) {
+                    setTimeout(() => {
+                        nextAudio.play().catch(e => {
+                            console.log('Keyingi musiqa avtomatik ijro etilmadi:', e);
+                        });
+                    }, 500);
+                }
+            }
+        }
+
+        // Yangi bo'limlar uchun o'zgaruvchilar
+        let customSections = JSON.parse(localStorage.getItem('customSections')) || [];
+        let selectedSectionColor = 'blue';
+
+        // Yangi bo'lim qo'shish
+        function addNewSection() {
+            document.getElementById('newSectionModal').classList.remove('hidden');
+            document.getElementById('newSectionModal').classList.add('flex');
+            
+            // Formani tozalash
+            document.getElementById('newSectionName').value = '';
+            document.getElementById('newSectionType').value = 'files';
+            document.getElementById('sectionStorageRange').value = '10';
+            updateStorageDisplay();
+            selectSectionColor('blue');
+        }
+
+        // Xotira ko'rsatkichini yangilash
+        function updateStorageDisplay() {
+            const value = document.getElementById('sectionStorageRange').value;
+            document.getElementById('storageDisplay').textContent = value + ' GB';
+        }
+
+        // Bo'lim rangini tanlash
+        function selectSectionColor(color) {
+            selectedSectionColor = color;
+            
+            // Barcha rang tugmalaridan border'ni olib tashlash
+            document.querySelectorAll('[data-color]').forEach(btn => {
+                btn.classList.remove('border-gray-800');
+                btn.classList.add('border-transparent');
+            });
+            
+            // Tanlangan rangga border qo'shish
+            const selectedBtn = document.querySelector(`[data-color="${color}"]`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('border-transparent');
+                selectedBtn.classList.add('border-gray-800');
+            }
+        }
+
+        // Bo'lim yaratish
+        document.getElementById('createSectionBtn').addEventListener('click', function() {
+            const name = document.getElementById('newSectionName').value.trim();
+            const type = document.getElementById('newSectionType').value;
+            const storage = document.getElementById('sectionStorageRange').value;
+            
+            if (name) {
+                const newSection = {
+                    id: Date.now(),
+                    name: name,
+                    type: type,
+                    storage: parseInt(storage),
+                    color: selectedSectionColor,
+                    data: [],
+                    createdAt: new Date().toLocaleDateString()
+                };
+                
+                customSections.push(newSection);
+                localStorage.setItem('customSections', JSON.stringify(customSections));
+                loadCustomSections();
+                
+                // Modal yopish
+                document.getElementById('newSectionModal').classList.add('hidden');
+                document.getElementById('newSectionModal').classList.remove('flex');
+                
+                // Muvaffaqiyat xabari
+                const successDiv = document.createElement('div');
+                successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg z-50';
+                successDiv.textContent = `✓ "${name}" bo'limi yaratildi!`;
+                document.body.appendChild(successDiv);
+                
+                setTimeout(() => {
+                    if (document.body.contains(successDiv)) {
+                        document.body.removeChild(successDiv);
+                    }
+                }, 3000);
+            } else {
+                alert('Iltimos, bo\'lim nomini kiriting!');
+            }
+        });
+
+        // Bo'lim modalini yopish
+        document.getElementById('cancelSectionBtn').addEventListener('click', function() {
+            document.getElementById('newSectionModal').classList.add('hidden');
+            document.getElementById('newSectionModal').classList.remove('flex');
+        });
+
+        // Maxsus bo'limlarni yuklash
+        function loadCustomSections() {
+            const container = document.getElementById('customSectionsList');
+            container.innerHTML = '';
+            
+            if (customSections.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-4">Hozircha yangi bo\'limlar yo\'q</p>';
+                return;
+            }
+            
+            customSections.forEach((section, index) => {
+                const sectionCard = document.createElement('div');
+                sectionCard.className = 'bg-white rounded-lg p-4 border border-gray-200 shadow-sm';
+                
+                const colorClasses = {
+                    blue: 'from-blue-400 to-blue-500',
+                    green: 'from-green-400 to-green-500',
+                    purple: 'from-purple-400 to-purple-500',
+                    red: 'from-red-400 to-red-500',
+                    yellow: 'from-yellow-400 to-yellow-500',
+                    indigo: 'from-indigo-400 to-indigo-500',
+                    pink: 'from-pink-400 to-pink-500',
+                    gray: 'from-gray-400 to-gray-500'
+                };
+                
+                const typeNames = {
+                    files: 'Fayllar',
+                    text: 'Matn',
+                    links: 'Havolalar',
+                    mixed: 'Aralash'
+                };
+                
+                sectionCard.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center flex-1">
+                            <div class="w-12 h-12 bg-gradient-to-br ${colorClasses[section.color]} rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2h-8l-2-2z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-semibold text-gray-800">${section.name}</h5>
+                                <p class="text-sm text-gray-600">${typeNames[section.type]} • ${section.storage} GB</p>
+                                <p class="text-xs text-gray-500">${section.createdAt} • ${section.data.length} element</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openCustomSection(${index})" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition-colors text-sm">
+                                Ochish
+                            </button>
+                            <button onclick="removeCustomSection(${index})" class="text-gray-400 hover:text-red-500 transition-colors">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(sectionCard);
+            });
+        }
+
+        // Maxsus bo'limni ochish
+        function openCustomSection(index) {
+            const section = customSections[index];
+            alert(`"${section.name}" bo'limi hozircha ishlab chiqilmoqda. Tez orada mavjud bo'ladi!`);
+        }
+
+        // Maxsus bo'limni o'chirish
+        function removeCustomSection(index) {
+            const section = customSections[index];
+            if (confirm(`"${section.name}" bo'limini o'chirishni xohlaysizmi? Barcha ma'lumotlar yo'qoladi!`)) {
+                customSections.splice(index, 1);
+                localStorage.setItem('customSections', JSON.stringify(customSections));
+                loadCustomSections();
+            }
+        }
+
         // Sahifa yuklanganda ma'lumotlarni yuklash
         loadProfileData();
         loadAllData();
+        loadCustomSections();
         
         // Iframe'larni oldindan yuklash
         preloadIframes();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97ab0fef064c8ba0',t:'MTc1NzEzMTI1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97ab38b2e5a08ba0',t:'MTc1NzEzMjkyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
